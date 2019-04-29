@@ -4,21 +4,29 @@ class User extends Base {
   constructor(user) {
     super('/users', 'users')
 
-    this.user = {}
-    this.users = []
+    this.permissionLevels = {
+      USER: 1,
+      SUBSCRIBER: 2,
+      ADMIN: 2000,
+    }
 
-    if (user !== null && user !== undefined) { this.setUser(user) }
+    if (user !== null && user !== undefined) { this.setModel(user) }
   }
 
-  setUser(user) {
-    this.user.__v = user.__v
-    this.user._id = user._id
-    this.user.email = user.email
-    this.user.permission = user.permission
-    this.user.isSuspended = user.isSuspended
-    this.user.confirmed = user.confirmed
-    this.user.createdAt = user.createdAt
-    this.user.updatedAt = user.updatedAt
+  setModel(user) {
+    // this.model.__v = user.__v
+    // this.model._id = user._id
+    this.model.id  = user.id
+    this.model.email = user.email
+    this.model.permission = user.permission
+    this.model.isSuspended = user.isSuspended
+    this.model.confirmed = user.confirmed
+    this.model.created_at = user.created_at
+    this.model.updated_at = user.updated_at
+  }
+
+  permissionLevel() {
+    // for
   }
 
   isAdmin() {

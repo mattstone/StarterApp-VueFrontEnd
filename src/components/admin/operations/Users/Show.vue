@@ -2,7 +2,12 @@
 <div>
   <div class="row">
     <div class="col-md-11">
-      <h2 class="text-capitalize">{{this.model.name}}</h2>
+
+      <h2 class="text-capitalize">
+        <span v-if= "this.model !== null">
+          {{this.model.name}}
+        </span>
+      </h2>
     </div>
     <div class="col-md-1">
       <i class="fas fa-plus-square text-primary"></i>
@@ -22,27 +27,31 @@
       <th scope="col">Actions</th>
     </thead>
     <tbody>
-      <template v-if="models.length === 0">
-        <tr>
-          <td colspan="4">There are no users</td>
-        </tr>
+      <template v-if="model === null">
       </template>
       <template v-else>
-        <tr v-for="model in models">
-          <td>{{model.email}}</td>
-          <td>{{model.created_at | moment("Do MMMM YYYY") }}</td>
-          <td>{{model.updated_at | moment("Do MMMM YYYY") }}</td>
-          <td>
-            <div>
-              <button v-on:click="edit(model.id)" type="button" class="btn btn-primary">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button  v-on:click="trash(model.id)" type="button" class="btn btn-danger">
-                <i class="fas fa-trash-alt"></i>
-              </button>
-            </div>
-          </td>
-        </tr>
+        <template v-if="model.models.length === 0">
+          <tr>
+            <td colspan="4">There are no users</td>
+          </tr>
+        </template>
+        <template v-else>
+          <tr v-for="model in model.models">
+            <td>{{model.email}}</td>
+            <td>{{model.created_at | moment("Do MMMM YYYY") }}</td>
+            <td>{{model.updated_at | moment("Do MMMM YYYY") }}</td>
+            <td>
+              <div>
+                <button v-on:click="edit(model.id)" type="button" class="btn btn-primary">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button  v-on:click="trash(model.id)" type="button" class="btn btn-danger">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </template>
       </template>
 
     </tbody>
@@ -71,8 +80,7 @@ export default {
       error: '',
       errors: [],
       isShowSpinner: false,
-      model: null,
-      models: []
+      model: null
     }
   },
   mounted: function () {
@@ -103,15 +111,10 @@ export default {
       this.model.get(params, function (errors, response) {
         if (errors) {
           self.errors = errors
-        } else {
-
         }
-        self.models = self.model.records
       })
     },
     edit: function (id) {
-      console.log('edit')
-      console.log(id)
       this.$router.push({name: 'admin_operations_users_edit', params: { id: id }})
     },
     trash: function (id) {
@@ -120,7 +123,6 @@ export default {
       console.log(this.model.name)
     }
   }
-
 }
 
 </script>

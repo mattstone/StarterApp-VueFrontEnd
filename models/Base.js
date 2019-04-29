@@ -17,12 +17,16 @@ class Base {
     this.restUrl  = this.apiUrl + restPath
     this.version  = 1
     this.errors   = []
-    this.records  = []
 
     this.offset   = 0
     this.limit    = 20
     this.meta     = 0
+
+    this.model = {}
+    this.models = []
   }
+
+  singular() { return this.name.slice(0, -1) }
 
   // REST API
   request(meth, params = null, version = null, cb) {
@@ -85,8 +89,8 @@ class Base {
   };
 
   get(params, cb) {
-    params.url   = this.restUrl;
-    this.records = []
+    params.url  = this.restUrl;
+    this.models = []
 
     if (params.id) {
       params.url = params.url + '/' + String(params.id)
@@ -98,16 +102,29 @@ class Base {
     this.request('GET', params, this.version, (err, response) => {
       if (response.data) {
         this.meta = response.data.meta
-        this.records = response.data[this.name]
+        this.models = response.data[this.name]
       }
       cb(err, response);
     });
   };
 
   show(params, cb) {
-    params.url  = "/" + this.restUrl + "/" + params.id + "/";
+    params.url = this.restUrl;
+    this.model = {};
+    if (params.id) {
+      params.url = params.url + '/' + String(params.id)
+    }
     delete(params.id);
-    this.request.get('GET', params, this.version, (err, response) => {
+    var self = this;
+    this.request('GET', params, this.version, (err, response) => {
+      self.setModelFromResponse(response)
+      // if (response) {
+      //   if (response.data) {
+      //     if (response.data[self.singular()]) {
+      //       self.setModel(response.data[self.singular()])
+      //     }
+      //   }
+      // }
       cb(err, response);
     });
 
@@ -116,7 +133,7 @@ class Base {
 
   create(params, cb) {
     this.errors = [];
-    params.url  = "/" + this.restUrl;
+    params.url = this.restUrl;
     this.request('POST', params, this.version, (err, response) => {
       cb(err, response);
     });
@@ -124,15 +141,23 @@ class Base {
 
   update(params, cb) {
     this.errors = [];
-    params.url  = "/" + this.restUrl + "/" + params.id + "/";
+    params = this.params(params)
+    params.url = this.restUrl;
+    params.url = params.url.concat('/').concat(this.model.id)
+
     delete(params.id);
+
+    var self = this;
     this.request('PUT', params, this.version, (err, response) => {
+      self.setModelFromResponse(response)
       cb(err, response);
     });
   };
 
   delete(id, cb) {
     this.errors = [];
+    const params = {}
+    params.url = this.restUrl;
     params.url  = "/" + this.restUrl + "/" + params.id + "/";
     this.request('DELETE', params, this.version, (err, response) => {
       cb(err, response);
@@ -145,6 +170,28 @@ class Base {
 
   validate() {  // customize in child class
     return true;
+  }
+
+  setModelFromResponse(response) {
+    if (response) {
+      if (response.data) {
+        if (response.data[this.singular()]) {
+          this.setModel(response.data[this.singular()])
+        }
+      }
+    }
+
+  }
+
+  // overwrite in child models
+  setModel(data) {}
+
+  params(params) {
+    if (params === null || params === undefined) {
+      params = {}
+    }
+    params[this.singular()] = this.model
+    return params
   }
 
 }
