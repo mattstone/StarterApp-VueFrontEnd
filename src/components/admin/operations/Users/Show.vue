@@ -2,10 +2,10 @@
 <div>
   <div class="row">
     <div class="col-md-11">
-      <h2>Users</h2>
+      <h2 class="text-capitalize">{{this.model.name}}</h2>
     </div>
     <div class="col-md-1">
-      <i class="fas fa-plus-square"></i>
+      <i class="fas fa-plus-square text-primary"></i>
     </div>
   </div>
 
@@ -37,7 +37,7 @@
               <button v-on:click="edit(model.id)" type="button" class="btn btn-primary">
                 <i class="fas fa-edit"></i>
               </button>
-              <button type="button" class="btn btn-danger">
+              <button  v-on:click="trash(model.id)" type="button" class="btn btn-danger">
                 <i class="fas fa-trash-alt"></i>
               </button>
             </div>
@@ -71,8 +71,8 @@ export default {
       error: '',
       errors: [],
       isShowSpinner: false,
-      user: null,
-      users: []
+      model: null,
+      models: []
     }
   },
   mounted: function () {
@@ -111,6 +111,11 @@ export default {
     },
     edit: function (id) {
       console.log('edit')
+      console.log(id)
+      this.$router.push({name: 'admin_operations_users_edit', params: { id: id }})
+    },
+    trash: function (id) {
+      console.log('delete')
       console.log(id)
       console.log(this.model.name)
     }

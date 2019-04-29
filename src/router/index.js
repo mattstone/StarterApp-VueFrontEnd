@@ -37,7 +37,7 @@ let router = new Router({
     { path: '/admin/dashboard', name: 'admin_dashboard', component: AdminDashboard, meta: { requiresAuth: true } },
     { path: '/admin/operations/users', name: 'admin_operations_users', component: AdminOperationsUsers, meta: { requiresAuth: true } },
     { path: '/admin/operations/users/add', name: 'admin_operations_users_add', component: AdminOperationsUsersAdd, meta: { requiresAuth: true } },
-    { path: '/admin/operations/users/edit', name: 'admin_operations_users_edit', component: AdminOperationsUsersEdit, meta: { requiresAuth: true } },
+    { path: '/admin/operations/users/edit', name: 'admin_operations_users_edit', component: AdminOperationsUsersEdit, props: true, meta: { requiresAuth: true } },
     { path: '/user/dashboard', name: 'user_dashboard', component: UserDashboard, meta: { requiresAuth: true } },
     { path: '*', name: 'NotFound', component: NotFound }
     // { path: '*', redirect: '/' }

@@ -88,6 +88,10 @@ class Base {
     params.url   = this.restUrl;
     this.records = []
 
+    if (params.id) {
+      params.url = params.url + '/' + String(params.id)
+    }
+
     // handle paging
     if (!params.offset) { params.offset = 0;  }
     if (!params.limit)  { params.limit  = 20; }
